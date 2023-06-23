@@ -319,4 +319,32 @@ for line in fh:
 
 print("There were", count, "lines in the file with From as the first word")
 
+####################
+#Write a program to read through the mbox-short.txt and figure out who has sent the greatest number of mail messages. The program looks for 'From ' lines and takes the second word of those lines as the person who sent the mail. The program creates a Python dictionary that maps the sender's mail address to a count of the number of times they appear in the file. After the dictionary is produced, the program reads through the dictionary using a maximum loop to find the most prolific committer.
 
+name = input("Enter file:")
+handle = open(name)
+emailist = []
+sender= dict()
+
+#extraer los correos del texto
+for line in handle: #recorrer las líneas
+    if line.startswith("From "): #definir cual queremos
+        linelst = line.split() #pasarla a una lista
+        email = linelst[1] #elegir los elementos
+        emailist.append(email) #añadirlo a una lista 
+
+#recorrer la lista de correos generada y añadirlo a un diccionario
+for dir in emailist:
+    sender[dir] = sender.get(dir, 0) + 1 #en el diccionario, añadir la llave del correo que queremos y el valor by default, añadir uno si existe
+
+#recorrer el diccionario y chequear cual es el valor mas grande
+
+bigcount = 0 #almacenar contador de palabras
+bigword = 0 #almacenar palabra en la memoria
+
+for word,count in sender.items(): #recorrer los pares clave valor en los items del diccionario
+    if bigcount is None or count > bigcount: #si el valor del primer item es 0 entonces creamos el valor
+        bigword = word #y reemplazamos el valor existente por el mas grande
+        bigcount = count #y reemplazamos el valor existente por el mas grande
+print(bigword, bigcount) #imprimir el par clave valor de mas alto valor
