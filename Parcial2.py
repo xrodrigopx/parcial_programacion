@@ -348,3 +348,33 @@ for word,count in sender.items(): #recorrer los pares clave valor en los items d
         bigword = word #y reemplazamos el valor existente por el mas grande
         bigcount = count #y reemplazamos el valor existente por el mas grande
 print(bigword, bigcount) #imprimir el par clave valor de mas alto valor
+
+
+#####################################
+#IMPRIMIR LAS 10 PALABRAS MAS COMUNES 
+
+lst = [] #tenemos una lista para almacenar pares k, v
+dct = {} #y un diccionario ya creado
+for key,value in dct.items(): #iteramos sobre los items (k , v) del diccionario que tenemos 
+    newtup = (value , key) #lo que salga de ahí, son tuplas que vamos a guardar
+    lst.append(newtup) #las guardamos en la lista vacía
+
+#ahora las tenemos que ordenar, porque están ordenadas en value, key order. para que aparezca la key primero y luego el valor
+
+lst = sorted (lst, reverse=True) #con esto las ordenamos de mayor a menor, primero el valor, luego la key
+for value , key in lst[:10]: #con esto las vamos a meter en una lista ya volteadas para luego imprimirlas
+    print(key , value) #las podemos imprimir en key, value o al revés si queremos
+
+###################################################
+# LIST COMPREHENSION
+#podemos resumir esto de esta manera:
+
+c = {}
+print (sorted([(value,key) for key,value in c.items()]))
+
+#podemos leerlo así:
+
+# [(value,key) for key,value in c.items()] <-- con esto vamos a crear una lista de pares clave valor, iterando sobre un diccionario ya creado. 
+
+# sorted([(value,key) for key,value in c.items()]) <-- con esto lo ordenamos. 
+ # print (sorted([(value,key) for key,value in c.items()])) <-- al final lo imprimimos
