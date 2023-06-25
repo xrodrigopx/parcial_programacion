@@ -1162,3 +1162,1465 @@ def solution(str):
 
 def pig_it(text):
     txtlst = text.split()
+
+
+# Laboratorio 8 - Ejercicio 8 (desafio)
+#
+#
+# Definicion de Variables con valores por defecto
+archivo_salida = "clientes_new.csv"
+separador = ','
+columnas = ['0', '1', '2', '3', '4']
+agrega_valor = ''
+
+# Lista con los clientes que se van a cargar del archivo de entrada
+clientes = []
+
+# Se pide ubicación del archivo de clientes (por ejemplo: clientes.csv)
+archivo_entrada = input("Ingrese archivo de clientes > ")
+
+# Se lee el contenido y se carga los clientes en la lista
+f = open(archivo_entrada)
+for cliente in f:
+    cliente = cliente.rstrip()
+    clientes.append(cliente.split(','))
+f.close()
+
+# Se le pide al usuario que ingrese los comandos
+comando = input("Ingrese comando > ")
+
+lista_comandos = comando.split()
+
+# Se procesan los comandos
+for comando in lista_comandos:
+    comando_partes = comando.split('=')
+    if comando_partes[0] == '-s':
+        separador = comando_partes[1]
+    elif comando_partes[0] == '-c':
+        columnas = comando_partes[1].split(',')
+    elif comando_partes[0] == '-a':
+        agrega_valor = comando_partes[1]
+    elif comando_partes[0] == '-o':
+        archivo_salida = comando_partes[1]
+
+# Se crea el archivo de salida
+o = open(archivo_salida,'w')
+
+# Se procesan los clientes y se graba en el archivo de salida
+for cliente in clientes:
+    linea = ""
+    for pos in range(len(columnas)):
+        linea += cliente[int(columnas[pos])]
+        if pos < len(columnas)-1:
+            linea += separador
+        pos += 1
+    if len(agrega_valor):
+        linea += separador + agrega_valor
+    o.write(linea + '\n')
+
+o.close()
+
+
+# Laboratorio 8 - Ejercicio 4
+#
+# Ver la letra en el pdf
+#
+
+
+def si_o_no(texto):
+    while True:
+        opcion = input(texto + "(si/no) > ")
+        if opcion.lower() in ['si','no']:
+            return opcion
+
+
+def imprimo_consulta(consulta, cadena, nombre, apellido):
+
+    print("Estimado {} {}".format(nombre, apellido))
+    if consulta[0] != 0:
+        print("La cadena '{}' aparecio un total de {} en el archivo".format(
+            cadena, consulta[0]
+        ))
+        print("en las posiciones que se detallan a continuación.")
+        print("Nro de línea\t\tUbicación")
+        print("============\t\t=========")
+        for elemento in consulta[1:]:
+            print("{:12}\t\t{:9}".format(
+                elemento[0], elemento[1]
+            ))
+        print("=================================================")
+    else:
+        print("La cadena '{}' no se encuentra en el archivo".format(
+            cadena
+        ))
+    print()
+
+def busco_cadena(ubicacion, cadena, nombre, apellido):
+
+    archivo = open(ubicacion)
+    resultado = []
+
+    resultado.append(0)  # inicializo el primer elemento con el contador
+                         # en 0
+    nro_linea = 0
+    for linea in archivo:
+        linea = linea.strip()
+        nro_linea += 1
+        pos = linea.find(cadena)
+        while pos != -1:
+            resultado.append([nro_linea,pos])
+            resultado[0] += 1
+            pos = linea.find(cadena, pos + len(cadena))
+    archivo.close()
+
+    opcion = si_o_no("Quiere ver el resultado de la consulta?")
+    if opcion == 'si':
+        imprimo_consulta(resultado, cadena, nombre, apellido)
+
+    return resultado
+
+
+# Programa principal
+
+nombre = input("Ingrese su nombre > ")
+apellido = input("Ingrese su apellido > ")
+ubicacion = input("Ingrese nombre de archivo > ")
+cadena = input("Ingrese la cadena a buscar > ")
+
+resultado = busco_cadena(ubicacion, cadena, nombre, apellido)
+
+# Laboratorio 8 - Ejercicio 3
+#
+# Escribir una función que le permita ingresar texto a un usuario,
+# hasta que ingrese la secuencia de caracteres "::q" con la cual
+# indicará que finaliza el ingreso.
+#
+# Luego de finalizado el ingreso, el programa le solicitará que ingrese
+# un nombre (ubicación y nombre con extensión) de archivo en el cual se
+# grabará todo el texto ingresado
+# Finalmente le preguntará si quiere ver el texto guardado en el archivo,
+# y en caso afirmativo le mostrará el contenido del archivo grabado.
+
+
+def ingreso_texto():
+    texto = []
+
+    print("Ingrese textos dando enter, ingresar ':qq' para finalizar")
+    linea = input("Ingrese texto > ")
+    while linea != ":qq":
+        texto.append(linea.strip())
+        linea = input(">> ")
+
+    return texto
+
+
+# Programa principal
+
+texto = ingreso_texto()
+
+if len(texto) > 0:
+    ubicacion = input("Escribir en el archivo > ")
+    archivo = open(ubicacion, 'w')
+    for linea in texto:
+        archivo.write(linea + "\n")
+    archivo.close()
+    respuesta = input("Quiere ver el contenido? (si/no) > ")
+    if respuesta.lower() == "si":
+        archivo = open(ubicacion, "r")
+        print(archivo.read())
+
+
+# Laboratorio 8 - Ejercicio 2
+#
+# Escribir una función que abra 2 archivos indicados por
+# parámetro y escriba un nuevo archivo con las líneas
+# intercaladas de los archivos originales.
+#
+# La solución utiliza un while que itera en el primer archivo y
+# en el interior del while escribe la linea leia del primer archivo
+# y lee una línea del segundo archivo (si hay líneas sin leer), la
+# escribe en el archivo de salida.
+# al finalizar de leer el primer archivo se ejecuta un while
+# que lee el segundo archivo y escribe las lineas en el archivo de
+# salida en el caso que el segundo archivo sea más grande que el primero
+
+def intercalar(archivo1, archivo2, archivo3):
+
+    a1 = open(archivo1)
+    a2 = open(archivo2)
+
+    a3 = open(archivo3, "w")
+
+    linea1 = a1.readline()
+    while (linea1):
+        linea1 = linea1.rstrip() # elimina el newline
+        a3.write(linea1 + "\n")
+
+        linea2 = a2.readline()
+        if (linea2):
+            linea2 = linea2.rstrip() # elimina el newline
+            a3.write(linea2 + "\n")
+
+        linea1 = a1.readline()
+
+    # Si el archivo2 es más grande hay que escribir las lineas
+    # que quedaron sin leer
+    linea2 = a2.readline()
+    while (linea2):
+        linea2 = linea2.rstrip()
+        a3.write(linea2 + "\n")
+        linea2 = a2.readline()
+
+    a1.close()
+    a2.close()
+    a3.close()
+
+# Programa principal
+archivo1 = "archivo1.txt"
+archivo2 = "archivo2.txt"
+archivo3 = "archivo3.txt"
+
+print("Intercalando el archivo: {} con el archivo: {}".format(
+    archivo1, archivo2
+))
+print("y escribiendo el resultado en el archivo: {}".format(
+    archivo3
+))
+
+intercalar(archivo1, archivo2, archivo3)
+
+print()
+print()
+
+archivo4 = "archivo4.txt"
+
+print("Intercalando el archivo: {} con el archivo: {}".format(
+    archivo2, archivo1
+))
+print("y escribiendo el resultado en el archivo: {}".format(
+    archivo4
+))
+intercalar(archivo2, archivo1, archivo4)
+print()
+
+
+# Laboratorio 8 - Ejercicio 2
+#
+# Escribir una función que abra 2 archivos indicados por
+# parámetro y escriba un nuevo archivo con las líneas
+# intercaladas de los archivos originales.
+#
+# La solución utiliza dos for anidados, en el primer for se lee las
+# las líneas del primer archivo y en el for interno se lee una linea
+# del segundo archivo y se interrumpe el for. En la siguiente iteración
+# del primer for, si no se llego a la última línea del segundo archivo,
+# se lee la línea siguiente del mismo.
+# Cuando se termino de leer el primer archivo y termina el primer for,
+# se ejecuta un for para leer las lineas que falten del segundo archivo
+# este for se ejecuta si el segundo archivo es más largo que el primero.
+
+def intercalar(archivo1, archivo2, archivo3):
+
+    a1 = open(archivo1)
+    a2 = open(archivo2)
+
+    a3 = open(archivo3, "w")
+
+    for linea1 in a1:
+        linea1 = linea1.rstrip() # elimina el newline
+        a3.write(linea1 + "\n")
+
+        for linea2 in a2:
+            linea2 = linea2.rstrip() # elimina el newline
+            a3.write(linea2 + "\n")
+            break
+
+    # Si el archivo2 es más grande hay que escribir las lineas
+    # que quedaron sin leer
+    for linea2 in a2:
+        linea2 = linea2.rstrip()
+        a3.write(linea2 + "\n")
+
+    a1.close()
+    a2.close()
+    a3.close()
+
+# Programa principal
+archivo1 = "archivo1.txt"
+archivo2 = "archivo2.txt"
+archivo3 = "archivo3.txt"
+
+print("Intercalando el archivo: {} con el archivo: {}".format(
+    archivo1, archivo2
+))
+print("y escribiendo el resultado en el archivo: {}".format(
+    archivo3
+))
+
+intercalar(archivo1, archivo2, archivo3)
+
+print()
+print()
+
+archivo4 = "archivo4.txt"
+
+print("Intercalando el archivo: {} con el archivo: {}".format(
+    archivo2, archivo1
+))
+print("y escribiendo el resultado en el archivo: {}".format(
+    archivo4
+))
+intercalar(archivo2, archivo1, archivo4)
+print()
+
+# 1. Escribir una función que recibe como parámetros:
+#   a) el nombre (ubicación y nombre con extensión) de un archivo
+#   b) una cadena de caracteres
+#
+# y retorna la cantidad total de veces que esa cadena aparece en el archivo.
+# (Nota: La cadena puede estar formada por uno o varios caracteres.
+# Por ejemplo, un espacio " ", una letra "z", o por varios caracteres "¡Hola!").
+#
+# Solución utilizando el metodo count del string
+
+def contar_cadena(ubicacion, cadena):
+
+    archivo = open(ubicacion, 'r')
+
+    contador = 0
+
+    for linea in archivo:
+        contador += linea.count(cadena)
+    return contador
+
+#ubicacion = input("Nombre de Archivo > ")
+#cadena = input("Cadena > ")
+
+ubicacion = "don_quijote_cap1.txt"
+cadena = "caballero"
+
+print("La cadena [{}] se encuentra {} veces en el archivo {}".format(
+    cadena, contar_cadena(ubicacion, cadena), ubicacion
+))
+
+
+# 1. Escribir una función que recibe como parámetros:
+#   a) el nombre (ubicación y nombre con extensión) de un archivo
+#   b) una cadena de caracteres
+#
+# y retorna la cantidad total de veces que esa cadena aparece en el archivo.
+# (Nota: La cadena puede estar formada por uno o varios caracteres.
+# Por ejemplo, un espacio " ", una letra "z", o por varios caracteres "¡Hola!").
+#
+# Solución usando el find
+
+def contar_cadena(ubicacion, cadena):
+
+    archivo = open(ubicacion, 'r')
+
+    contador = 0
+
+    for linea in archivo:
+        pos = linea.find(cadena)
+        while pos != -1:
+            contador += 1
+            pos = pos + len(cadena)
+            pos = linea.find(cadena,pos)
+    return contador
+
+# ubicacion = input("Nombre de Archivo > ")
+# cadena = input("Cadena > ")
+
+ubicacion = "don_quijote_cap1.txt"
+cadena = "caballero"
+
+print("La cadena [{}] se encuentra {} veces en el archivo {}".format(
+    cadena, contar_cadena(ubicacion, cadena), ubicacion
+))
+
+# Laboratorio 7 - Desafio
+
+class Alumno():
+    def __init__(self, nombre, apellido, cedula, fechanac):
+        self.nombre = nombre
+        self.apellido = apellido
+        self.cedula = cedula
+        self.fechanac = fechanac
+
+    def __repr__(self):
+        return "{}, {}  {}  {}".format(
+               self.apellido, self.nombre, self.cedula, self.fechanac)
+
+
+class Grupo():
+    def __init__(self, numero, horario):
+        self.numero = numero
+        self.horario = horario
+        self.alumnos = []
+
+    def __repr__(self):
+        return "Numero: {}, Horario: {}".format(self.numero, self.horario)
+
+
+class Asignatura():
+    maxGrupos = 4           # Cantidad maxima de grupos en la Asignatura
+    maxAlumnosXgrupo = 5    # Cupo de alumnos por grupo (se usa 2 o 5 a efectos
+                             # de poder probar, para produccion se configura en 30
+
+    def __init__(self, id, grupos):
+        self.id = id
+        if len(grupos) <= Asignatura.maxGrupos:
+            self.grupos = grupos[:]
+        else:
+            self.grupos = grupos[:Asignatura.maxGrupos]
+            for grupo in grupos[Asignatura.maxGrupos:]:
+                print("Grupo: {} no incluido".format(grupo))
+
+    def inscribir_alumnos(self, gruponro, alumnos):
+
+        for grupo in self.grupos:
+            if gruponro == grupo.numero:
+                for alumno in alumnos:
+                    if len(grupo.alumnos) < Asignatura.maxAlumnosXgrupo:
+                        grupo.alumnos.append(alumno)
+                    else:
+                        print("El alumno: {},{} no pudo ser inscripto al grupo {} de la asignatura: {}".format(
+                            alumno.apellido,
+                            alumno.nombre,
+                            grupo.numero,
+                            self.id
+                        ))
+                break
+
+    def asignar_alumnos(self, alumnos):
+        alumnosaux = alumnos[:]
+        for grupo in self.grupos:
+            while len(alumnosaux) > 0:
+                if len(grupo.alumnos) < Asignatura.maxAlumnosXgrupo:
+                    if (len(alumnosaux) > 0):
+                        grupo.alumnos.append(alumnosaux[0])
+                        del alumnosaux[0]
+                    else:
+                        break
+                else:
+                    break
+        return alumnosaux    # retorna una lista con los alumnos que no
+                             # se pueden inscribir, esta lista puede ser vacia.
+
+    def __repr__(self):
+        texto = "Asignatura: {}\nGrupos:\n".format(self.id)
+        for grupo in self.grupos:
+            texto  = texto + "\t{}\n".format(grupo)
+            for alumno in grupo.alumnos:
+                texto = texto + "\t\t{}\n".format(alumno)
+            texto = texto + "\n"
+        texto = texto + "\n"
+        return texto
+
+#Programa Principal
+grupo1 = Grupo(1, 'Martes y Jueves de 18:30 a 22:30')
+grupo2 = Grupo(2, 'Miercoles y Viernes de 10:00 a 12:00')
+
+asignatura1 = Asignatura('Programacion I', [grupo1,grupo2])
+
+al1 = Alumno('Alicia', 'Perez', '5.111.111', '2/3/1988')
+al2 = Alumno('Juan', 'Garcia', '5.222.111', '24/12/1988')
+al3 = Alumno('Estella', 'Dominguez', '5.333.111', '15/3/1988')
+al4 = Alumno('Dionisio', 'Diaz', '5.444.111', '9/4/1988')
+al5 = Alumno('Esteban', 'Quito', '5.888.111', '23/3/1988')
+al6 = Alumno('Soledad', 'Silveira', '5.666.111', '28/2/1988')
+al7 = Alumno('Giovani', 'Mecci', '5.555.222', '12/6/1988')
+al8 = Alumno('Alejandro', 'Borgia', '5.123.456', '1/9/1988')
+al9 = Alumno('Sebastian', 'Del Rey', '5.888.111', '23/3/1988')
+al10 = Alumno('Miguel', 'Lopez', '5.666.111', '28/2/1988')
+al11 = Alumno('Ariana', 'Mecci', '5.555.222', '12/6/1988')
+al12 = Alumno('Jorge', 'Prieto', '5.123.456', '1/9/1988')
+al13 = Alumno('Silvina', 'Barros', '5.888.111', '23/3/1988')
+al14 = Alumno('Gustavo', 'Garcia', '5.666.111', '28/2/1988')
+al15 = Alumno('Eduardo', 'Palermo', '5.555.222', '12/6/1988')
+al16 = Alumno('Brain', 'Rodriguez', '5.123.456', '1/9/1988')
+al17 = Alumno('Jessy', 'Longhorm', '5.888.111', '23/3/1988')
+al18 = Alumno('Federico', 'Salerno', '5.666.111', '28/2/1988')
+al19 = Alumno('Federico', 'Salerno', '5.666.111', '28/2/1988')
+al20 = Alumno('Ricardo', 'Ledesma', '5.555.222', '12/6/1988')
+al21 = Alumno('Genaro', 'Fernandez', '5.123.456', '1/9/1988')
+
+asignatura1.inscribir_alumnos(1, [al1, al2, al3, al4, al5, al6, al7, al8])
+
+print()
+print(asignatura1)
+print()
+print(grupo1)
+print(grupo2)
+print()
+grupo3 = Grupo(3, 'Martes y Jueves de 16:30 a 18:30')
+grupo4 = Grupo(4, 'Miercoles y Viernes de 17:00 a 18:00')
+grupo5 = Grupo(5, 'Sabados de 10:00 a 12:00')
+
+asignatura2 = Asignatura('Programacion II', [grupo3, grupo4, grupo5])
+lst_alumnos = asignatura2.asignar_alumnos([al1, al2, al3, al4, al5, al6, al7, al8,
+                                  al9, al10, al11, al12, al13, al14, al15,
+                                  al16, al17, al18, al19, al20, al21])
+
+if len(lst_alumnos) > 0:
+    print("No se pudieron inscribr a: {} los alumnos: ".format(asignatura2.id))
+    for alumno in lst_alumnos:
+        print("\t{}".format(alumno))
+print()
+print()
+print(asignatura2)
+
+
+# Laboratorio 7 - Ejercicio 8
+
+import random
+
+
+class Baraja(object):
+    def __init__(self, palo, valor):
+        self.palo = palo
+        self.valor = valor
+
+    def mismo_palo(self, otra_carta):
+        if self.palo == otra_carta.palo:
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        return self.palo + ":" + str(self.valor)
+
+
+class Mazo(object):
+    def flor_derecha(mano):
+        '''Funcion de Clase. Determina si la mano tiene una
+           flor de derecha (no se considera si hay piezas)'''
+        if mano[0].mismo_palo(mano[1]) and mano[0].mismo_palo(mano[2]):
+            return True
+        else:
+            return False
+
+    def tiene_piezas(muestra, mano):
+        ''' Función de Clase, retorna verdadero si la mano del
+            jugador tiene piezas.'''
+        piezas = [2, 4, 5, 10, 12]
+
+        resultado = False
+        for baraja in mano:
+            if muestra.mismo_palo(baraja):
+                if baraja.valor in piezas:
+                    resultado = True
+        return resultado
+
+
+def inicializo_mazo():
+    '''Retorna una lista que representa el mazo de cartas '''
+    valores = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12]
+    palos = ["Copa", "Basto", "Espada", "Oro"]
+
+    mazo = []
+
+    for palo in palos:
+        for valor in valores:
+            baraja = Baraja(palo, valor)
+            mazo.append(baraja)
+
+    return mazo
+
+
+def reparto_barajas(mazo, n):
+    ''' Retorna una lista con la mano de cada participante.
+        mazo = Lista de Barajas
+        n = cantidad de participantes (valores pueden ser 2 o 4)'''
+
+    mano = []
+
+    if n == 2 or n == 4:
+        for participante in range(n):
+            mano_participante = []  # Lista de cartas del participante
+            for carta_nro in range(3):  # Se le asignan tres cartas al azar al
+                # Paticipante.
+                pos = random.randint(0, len(mazo) - 1)  # Se obtiene un nro al azar
+                # que sea un indice valido
+                carta = mazo[pos]  # se obtiene la baraja en pos
+                mano_participante.append(carta)  # se agrega a la lista de cartas
+                # del participante
+                del (mazo[pos])  # se elimna la carta del mazo
+            mano.append(mano_participante)  # se agrega la lista de cartas a la mano
+
+    return mano
+
+
+def obtengo_muestra(mazo):
+    '''Retorna una carta que va a ser la muestra'''
+    pos = random.randint(0, len(mazo) - 1)
+    muestra = mazo[pos]
+    del (mazo[pos])    # la muestra obtenida ses borra del mazo
+    return muestra
+
+
+# Programa principal --------------------------------
+mazo = inicializo_mazo()
+mano = reparto_barajas(mazo, 4)
+muestra = obtengo_muestra(mazo)
+
+print("Muestra: {}\n".format(muestra))
+for participante in range(4):
+    print("Participante: {}".format(participante + 1))
+    for carta in mano[participante]:
+        print("\t{}".format(carta))
+    print()
+    if Mazo.tiene_piezas(muestra, mano[participante]):
+        print("\tEl jugador tiene piezas")
+    else:
+        print("\tEl jugador NO tiene piezas")
+    print()
+    if Mazo.flor_derecha(mano[participante]):
+        print("\tEl jugador tiene flor de derecha.")
+        print()
+
+# Laboratorio 7 - Ejercicio 7
+
+import random
+
+
+class Baraja(object):
+    def __init__(self, palo, valor):
+        self.palo = palo
+        self.valor = valor
+
+    def mismo_palo(self, otra_carta):
+        if self.palo == otra_carta.palo:
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        return self.palo + ":" + str(self.valor)
+
+
+def inicializo_mazo():
+    '''Retorna una lista que representa el mazo de cartas '''
+    valores = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12]
+    palos = ["Copa", "Basto", "Espada", "Oro"]
+
+    mazo = []
+
+    # Para cada palo se generan todos los numeros. Esto
+    # se lleva a cabo con un for anidado.
+    for palo in palos:
+        for valor in valores:
+            baraja = Baraja(palo, valor)
+            mazo.append(baraja)
+
+    return mazo
+
+
+def reparto_barajas(mazo, n):
+    ''' Retorna una lista con la mano de cada participante.
+        mazo = Lista de Barajas
+        n = cantidad de participantes (valores pueden ser 2 o 4)'''
+
+    mano = []
+
+    if n == 2 or n == 4:
+        for participante in range(n):
+            mano_participante = [] # Lista de cartas del participante
+            for carta_nro in range(3):  # Se le asignan tres cartas al azar al
+                                        # Paticipante.
+                pos = random.randint(0, len(mazo) - 1) # Se obtiene un nro al azar
+                                                       # que sea un indice valido
+                carta  = mazo[pos]                     # se obtiene la baraja en pos
+                mano_participante.append(carta)        # se agrega a la lista de cartas
+                                                       # del participante
+                del(mazo[pos])                         # se elimna la carta del mazo
+            mano.append(mano_participante)   # se agrega la lista de cartas a la mano
+
+    return mano
+
+
+def obtengo_muestra(mazo):
+    '''Retorna una carta que va a ser la muestra'''
+    pos = random.randint(0, len(mazo) - 1)
+    muestra = mazo[pos]
+    del(mazo[pos])
+    return muestra
+
+
+# Programa principal
+mazo = inicializo_mazo()
+mano = reparto_barajas(mazo, 4)
+muestra = obtengo_muestra(mazo)
+
+print("Muestra: {}\n".format(muestra))
+for participante in range(4):
+    print("Participante: {}".format(participante + 1))
+    for carta in mano[participante]:
+        print("\t{}".format(carta))
+    print()
+
+
+# Laboratorio 7 - Ejercicio 6
+
+
+class Baraja():
+    def __init__(self, palo, valor):
+        self.palo = palo
+        self.valor = valor
+
+    def mismo_palo(self, otra_carta): # otra_carta es un objeto Baraja
+        if self.palo == otra_carta.palo:
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        return self.palo + ":" + str(self.valor)
+
+
+# Programa principal
+carta1 = Baraja('Basto', 5)
+carta2 = Baraja('Copa', 1)
+carta3 = Baraja('Copa', 7)
+print(carta1)
+print(carta2)
+print(carta3)
+print("la carta {} tiene el mismo palo que la carta {}? {}".format(
+    carta1,carta2,carta1.mismo_palo(carta2)
+))
+print("la carta {} tiene el mismo palo que la carta {}? {}".format(
+    carta2,
+    carta3,
+    carta2.mismo_palo(carta3)
+))
+
+# Laboratorio 7 - Ejercicop 5
+
+
+def transformar_nombres(lista):
+    aux = []
+    for elem in lista:
+        aux.append(', '.join(elem))
+    return aux
+
+
+lista = transformar_nombres([['Rocky', 'Balboa'], ['Muhammad', 'Ali']])
+print(lista)
+
+# Laboratorio 7 - ej4
+
+
+def top_five(lista):
+
+    lista.sort()
+    lista.reverse()
+    if len(lista) >= 5:
+        return lista[:5]
+    else:
+        return lista
+
+
+lista = [1, 4, 1, 2, 6, 4, 4, 3, 3, 5]
+print(lista, "=>", top_five(lista))
+
+
+# Laboratorio 7 - ejercicio 3
+
+
+def difsim(lista1, lista2):
+    aux = []
+    for elem in lista1:
+        if not (elem in lista2):
+            aux.append(elem)
+    for elem in lista2:
+        if not (elem in lista1):
+            aux.append(elem)
+    return aux
+
+
+a = [1, 2, 3]
+b = [3, 4, 5]
+
+print("a={}, b={}, difsim={}".format(a, b, difsim(a, b)))
+
+
+# Definicion de funciones
+
+
+def eliminar_duplicados(lista):
+    '''Elimina duplicados de una lista recibida por parámetro'''
+    aux = []
+    for elem in lista:
+        if not (elem in aux):
+            aux.append(elem)
+    return aux
+
+
+# Programa Principal
+a = [1, 2, 3, 3, 6]
+b = eliminar_duplicados(a)
+
+print("Lista inicial {}  Resultado de la función {}".format(a, b))
+
+# Ejercicio 1 - Definir una función que retorna
+
+import random
+
+
+def lista_random(n):
+    ''' Retorna una lista de enteros entre 1 y 6, en forma randomica'''
+
+    aux = []
+    for i in range(n):
+        aux.append(random.randint(1, 6))
+    return aux
+
+
+print(lista_random(5))
+print(lista_random(5))
+print(lista_random(4))
+
+
+# Laboratorio 6 - ejercicio 5
+#
+#  Crear una clase Hora con atributos para las horas, los minutos y los segundos
+#  de una hora.
+#
+#  1. Construir un constructor sin parámetros con el 00:00:00 como valores por omisión.
+#  2. Construir un método “validar” que comprobará si la hora es correcta; si no lo es
+#     la ajustará al valor por omisión.
+#  3. Construir métodos que permitan acceder y modificar las horas, los minutos y los
+#     segundos de un objeto Hora (getters y setters).
+#  4. Construir un método que permita representar en un string la hora: mostrará la
+#     hora: (07hs. 03ms. 21s.).
+#  5. Construir un método “aSegundos” que devolverá el número de segundos transcurridos
+#     desde las 0 horas.
+#  6. Construir un método “deSegundos(int)” que hará que la hora sea la correspondiente
+#     a haber transcurrido, desde las 0 horas, los segundos que se indiquen como
+#     parámetro.
+#  7. Construir un método “segundosDesde(hora)” que devolverá el número de segundos entre
+#     la hora y la hora proporcionada como parámetro.
+#  8. Construir un método “siguiente” que pasará al segundo siguiente.
+#  9. Construir un método “anterior” que pasará al segundo anterior.
+#  10. Construir un método “copia” que devolverá un objeto clonado de la hora.
+
+
+class Hora():
+    def __init__(self):
+        self.h = 0
+        self.m = 0
+        self.s = 0
+
+    def getH(self):
+        return self.h
+
+    def setH(self, h):
+        self.h =h
+
+    def getM(self):
+        return self.m
+
+    def setM(self, m):
+        self.m = m
+
+    def getS(self):
+        return self.s
+
+    def setS(self, s):
+        self.s = s
+
+    def validar(self):
+        hora_valida = True
+        if ( self.h < 0 or self.h > 23):
+            hora_valida = False
+
+        if ( self.m < 0 or self.m > 59):
+            hora_valida = False
+
+        if ( self.s < 0 or self.s > 59):
+            hora_valida = False
+
+        if not hora_valida:
+            self.h = 0
+            self.m = 0
+            self.s = 0
+
+    def aSegundos(self):
+        return self.h * 60 * 60 + self.m * 60 + self.s
+
+    def deSegundos(self, segundos):
+        self.h = segundos // 3600
+        self.m = ( segundos % 3600 ) // 60
+        self.s = segundos - self.h * 3600 - self.m * 60
+
+
+    def segundosDesde(self, hora):
+        return abs( self.aSegundos() - hora.aSegundos() )
+
+    def siguiente(self):
+        # Paso a segundos y sumo 1, si el resultados ed 86400
+        # la hora pasa a ser 00:00:00
+        segundos = self.aSegundos()
+        segundos += 1
+        if segundos >= 86400:
+            segundos = 0
+        self.deSegundos(segundos)
+
+    def anterior(self):
+        # Paso a segundos y resto 1
+        # en el caso que segundos sea 0, la hora
+        # pasara a ser 23:59:59
+        segundos = self.aSegundos()
+        segundos -= 1
+        if segundos <= 0:
+            segundos = 86399
+        self.deSegundos(segundos)
+
+    def copia(self):
+        h = Hora()
+        h.setH(self.h)
+        h.setM(self.m)
+        h.setS(self.s)
+        return h
+
+    def __repr__(self):
+        return "{:02d}hs. {:02d}ms. {:02d}s.".format(
+            self.h,
+            self.m,
+            self.s
+        )
+
+
+# Programa principal
+h1 = Hora()
+print(h1)
+print("A segundos {}".format(h1.aSegundos()))
+
+h1.setH(21)
+h1.setM(45)
+h1.setS(0)
+
+print(h1)
+print("A segundos {}".format(h1.aSegundos()))
+print()
+
+h2 = Hora()
+h2.setH(5)
+h2.setM(0)
+h2.setS(0)
+
+print(h2)
+print("A segundos {}".format(h2.aSegundos()))
+print()
+print("segundosDesde: {}".format(h1.segundosDesde(h2)))
+print()
+h3 = Hora()
+h3.deSegundos(3600)
+print("deSegundos({}) = {}".format(
+    3600,
+    h3))
+h3.deSegundos(78300)
+print("deSegundos({}) = {}".format(
+    78300,
+    h3))
+h3.deSegundos(78358)
+print("deSegundos({}) = {}".format(
+    78358,
+    h3))
+print()
+h4 = Hora()
+print(h4)
+h4.anterior()
+print(h4)
+h4.siguiente()
+h4.siguiente()
+print(h4)
+h4.siguiente()
+print(h4)
+print()
+print("Validando:")
+h5 = Hora()
+h5.setH(25)
+print(h5)
+h5.validar()
+print(h5)
+h5.setM(70)
+print(h5)
+h5.validar()
+print(h5)
+h5.setS(70)
+print(h5)
+h5.validar()
+print(h5)
+print()
+h6 = h3.copia()
+print("H3: {}".format(h3))
+print("H6: {}".format(h6))
+
+
+# Laboratorio 6 - Ejercicio 4
+#
+# Implementar una clase modelando una cuenta bancaria. La cuenta bancaria tiene
+# un saldo, un número de cuenta, e información sobre el dueño, que es una instancia
+# de la clase anterior (ejercicio 3).
+#
+# La clase debe implementar los métodos de hacer un depósito o una extracción de dinero.
+# El método de extracción de dinero debe rechazar la transacción si no hay fondos
+# suficientes en la cuenta. También desarrollar una función transferencia que mueve
+# un monto entre una y otra cuenta (Para esto se puede realizar una extracción seguido
+# por un depósito). Esos métodos y funciones deben devolver un valor lógico indicando
+# si se fue posible ejecutar la transacción.
+#
+
+
+# Clase Persona del ej3
+class Persona():
+    def __init__(self, ncedula, apellidos, nombres, telefono, direccion):
+        self.setNcedula(ncedula)
+        self.setApellidos(apellidos)
+        self.setNombres(nombres)
+        self.setTelefono(telefono)
+        self.setDireccion(direccion)
+
+    def getNcedula(self):
+        return self.ncedula
+    def getApellidos(self):
+        return self.apellidos
+    def getNombres(self):
+        return self.nombres
+    def getTelefono(self):
+        return self.telefono
+    def getDireccion(self):
+        return self.direccion
+    def setNcedula(self, ncedula):
+        self.ncedula = ncedula
+    def setApellidos(self, apellidos):
+        self.apellidos = apellidos
+    def setNombres(self, nombres):
+        self.nombres = nombres
+    def setTelefono(self, telefono):
+        self.telefono = telefono
+    def setDireccion(self, direccion):
+        self.direccion = direccion
+    def __repr__(self):
+        return "CI: {}; Apellidos y Nombres: {}, {}; {}; Direccion: {}".format(
+            self.getNcedula(),
+            self.getApellidos(),
+            self.getNombres(),
+            self.getTelefono(),
+            self.getDireccion()
+        )
+
+class Cuenta():
+    def __init__(self, nrocta, cliente, saldo_inicial):
+        self.nrocta = nrocta
+        self.cliente = cliente
+        self.saldo = saldo_inicial
+
+    def getNroCta(self):
+        return self.nrocta
+    def getCliente(self):
+        return self.cliente
+    def getSaldo(self):
+        return self.saldo
+
+    def deposito(self, importe):
+        if (importe > 0):
+            self.saldo += importe
+
+    def extraccion(self, importe):
+
+        if (importe <= self.saldo):
+            self.saldo -= importe
+            resultado = True
+        else:
+            resultado = False
+        return resultado
+
+    def __repr__(self):
+        return "Cuenta: {} - Cliente: {} - {}, {} - Saldo: {}".format(
+            self.nrocta,
+            self.cliente.getNcedula(),
+            self.cliente.getApellidos(),
+            self.cliente.getNombres(),
+            self.saldo
+        )
+
+    def transferir(self, otra_cuenta, importe):
+        if self.extraccion(importe):
+            otra_cuenta.deposito(importe)
+            resultado = True
+        else:
+            resultado = False
+        return resultado
+
+# Programa Principal
+cliente1 = Persona('5.555.551', "Lopez", "Andres", "555-555555", "Salto 1542")
+cliente2 = Persona('5.555.552', "Fernandez", "Gerardo", "555-555556", "Egipto 456")
+cliente3 = Persona('5.555.553', "Gimeno", "Fernanda", "555-555558", "Bolivia 679")
+
+cuenta1 = Cuenta(10111, cliente1, 100.00)
+cuenta2 = Cuenta(10112, cliente2, 1000.00)
+cuenta3 = Cuenta(10113, cliente3, 10.00)
+print(cliente1)
+print(cliente2)
+print(cliente3)
+print()
+print("Cuentas y saldos")
+print("================")
+print(cuenta1)
+print(cuenta2)
+print(cuenta3)
+print()
+print("Se deposita {} en la cuenta {}".format(1500.00, cuenta1.getNroCta()))
+cuenta1.deposito(1500.00)
+print("Se depoita {} en la cuenta {}".format(2500.00, cuenta2.getNroCta()))
+cuenta2.deposito(2500.00)
+print("Se transfiere {} de la cuenta {} a la cuenta {}".format(
+    250.00,
+    cuenta2.getNroCta(),
+    cuenta1.getNroCta()
+))
+if cuenta2.transferir(cuenta1, 250.00):
+    print("\tTransaccion exitosa!")
+else:
+    print("\tFallo la transacción por falta de fondos")
+print()
+print(cuenta1)
+print(cuenta2)
+print()
+print("Se transfiere {} de la cuenta {} a la cuenta {}".format(
+    250.00,
+    cuenta3.getNroCta(),
+    cuenta1.getNroCta()
+))
+
+if cuenta3.transferir(cuenta1, 250.00):
+    print("\tTransaccion exitosa!")
+else:
+    print("\tFallo la transacción por falta de fondos")
+
+print()
+print("Cuentas y saldos")
+print("================")
+print(cuenta1)
+print(cuenta2)
+print(cuenta3)
+
+# Laboratorio 6 - Ejercicio 3
+#
+# 3. Implementar una clase para identidades de personas. La clase debe tener los
+#    componentes usuales para la identificación de las personas como el número de
+#    la cédula, una dirección, nombres y apellidos, número de teléfono, etc. Se
+#    debe incluir métodos de acceso a todas las propiedades.
+#
+
+class Persona():
+    def __init__(self, ncedula, apellidos, nombres, telefono, direccion):
+        self.setNcedula(ncedula)
+        self.setApellidos(apellidos)
+        self.setNombres(nombres)
+        self.setTelefono(telefono)
+        self.setDireccion(direccion)
+
+    def getNcedula(self):
+        return self.ncedula
+
+    def getApellidos(self):
+        return self.apellidos
+
+    def getNombres(self):
+        return self.nombres
+
+    def getTelefono(self):
+        return self.telefono
+
+    def getDireccion(self):
+        return self.direccion
+
+    def setNcedula(self, ncedula):
+        self.ncedula = ncedula
+
+    def setApellidos(self, apellidos):
+        self.apellidos = apellidos
+
+    def setNombres(self, nombres):
+        self.nombres = nombres
+
+    def setTelefono(self, telefono):
+        self.telefono = telefono
+
+    def setDireccion(self, direccion):
+        self.direccion = direccion
+
+    def __repr__(self):
+        return "CI: {}; Apellidos y Nombres: {}, {}; {}; Direccion: {}".format(
+            self.getNcedula(),
+            self.getApellidos(),
+            self.getNombres(),
+            self.getTelefono(),
+            self.getDireccion()
+        )
+# Programa principal
+persona1 = Persona('1.720.555','Perez Fernandez','Esteban','5982655551','Igua 7158')
+print(persona1)
+print("La dirección de {}, {} es {}".format(
+    persona1.getApellidos(),
+    persona1.getNombres(),
+    persona1.getDireccion()
+))
+
+
+# Laboratorio 6 - Ejercicio 2
+#
+# 2. En programación orientada a objetos uno de los pilares fundamentales es el
+#    encapsulamiento. Es buena práctica utilizar métodos de acceso a las propiedades
+#    (conocidos comúnmente como getters y setters). Agregar getters y setters a todas
+#    las propiedades de las clases anteriores. Los setters deben mantener la consistencia
+#    de la información, por ejemplo no se debe permitir modificar la salud de un
+#    personaje y que la misma sea negativa.
+
+
+class Personaje(object):
+    '''Clase Personaje'''
+
+    def __init__(self, nickname, vida, daño, poder):
+        self.setNickname(nickname)
+        self.setVida(vida)
+        self.setDaño(daño)
+        self.setPoder(poder)
+
+    def __repr__(self):
+        return "Nickname: {} Vida: {} Daño: {} Poder: {}".format(
+            self.getNickname(),
+            self.getVida(),
+            self.getDaño(),
+            self.getPoder()
+        )
+
+    def getNickname(self):
+        return self.nickname
+
+    def getVida(self):
+        return self.vida
+
+    def getDaño(self):
+        return self.daño
+
+    def getPoder(self):
+        return self.poder
+
+    def setNickname(self, nickname):
+        self.nickname = nickname
+
+    def setVida(self, vida):
+        if vida >= 0:
+            self.vida = vida
+        else:
+            self.vida = 0
+
+    def setDaño(self, daño):
+        self.daño = daño
+
+    def setPoder(self, poder):
+        self.poder = poder
+
+    def atacar(self, elotro):
+        vida = elotro.getVida() - self.getDaño()
+        elotro.setVida(vida)
+
+    def salud(self):
+        return self.vida > 0
+
+
+# Programa principal
+pj1 = Personaje("Hombre araña", 100, 67, "patada giratoria")
+pj2 = Personaje("Viuda Negra", 100, 75, "picadura mortal")
+pj3 = Personaje("La Momia", 100, 75, "abrazo mortal")
+
+print(pj1)
+print(pj2)
+print(pj3)
+print()
+pj1.atacar(pj2)
+pj1.atacar(pj3)
+print("Vida de {}: {}".format(pj1.getNickname(), pj1.getVida()))
+print("Vida de {}: {}".format(pj2.getNickname(), pj2.getVida()))
+print("Vida de {}: {}".format(pj3.getNickname(), pj3.getVida()))
+pj2.atacar(pj1)
+pj3.atacar(pj1)
+print("Vida de {}: {}".format(pj1.getNickname(), pj1.getVida()))
+print("{} esta saludable? {}".format(pj1.getNickname(), pj1.salud()))
+print()
+
+
+# Laboratorio 6 - Ejercicio 1
+#
+# Escribir una clase que permita representar al personaje de un videojuego.
+# Un personaje tiene un nombre (o nickname), un porcentaje de vida (o salud),
+# un poder (su nombre, por ejemplo, “patada giratoria”), y una medida de daño
+# (número entero entre 0 y 100).
+#
+# 1. Implementar un método que permite imprimir la información de un personaje
+#    utilizando la instrucción print()
+#
+# 2. Implementar un método que permite atacar a otro personaje (que se recibe cómo
+#    parámetro). El ataque del personaje (p1) le quita vida al personaje que es
+#    atacado (p2), utilizando la siguiente función:
+#
+#    nueva_vida(p2) = vida_actual(p2) - medida_de_daño(p1)
+#
+# 3. Implementar un método que indica (devolviendo True) si un personaje está con
+#    vida (salud > 0)
+#
+# 4. Crear 3 personajes llamados pj1, pj2 y pj3 (con el porcentaje de salud y poder
+# que ustedes desee), pj1 debe atacar a pj2 y pj3
+
+class Personaje(object):
+    '''Clase Personaje'''
+
+    def __init__(self, nickname, vida, daño, poder):
+        self.nickname = nickname
+        self.vida = vida
+        self.daño = daño
+        self.poder = poder
+
+    def __repr__(self):
+        return "Nickname: {} Vida: {} Daño: {} Poder: {}".format(
+            self.nickname,
+            self.vida,
+            self.daño,
+            self.poder
+        )
+
+    def atacar(self, elotro):
+        elotro.vida = elotro.vida - self.daño
+
+    def salud(self):
+        return self.vida > 0
+
+# Programa principal
+p1 = Personaje("La momia", 100, 70, "Abrazo mortal")
+p2 = Personaje("La viuda Negra", 100, 75, "Mordida venenosa")
+p3 = Personaje("El cazador", 100, 65, "Hachazo")
+
+print(p1, " salud:", p1.salud())
+print(p2, " salud:", p2.salud())
+print()
+print("El personaje {} ataca al personaje {}".format(
+    p1.nickname,
+    p2.nickname
+))
+
+p1.atacar(p2)
+
+print()
+print(p1, " salud:", p1.salud())
+print(p2, " salud:", p2.salud())
+print()
+print("El personaje {} ataca al personaje {}".format(
+    p1.nickname,
+    p3.nickname
+))
+
+p1.atacar(p3)
+
+print()
+print(p1, " salud:", p1.salud())
+print(p2, " salud:", p2.salud())
+print(p3, " salud:", p3.salud())
+print()
+
+#1)
+print([x+8 for x in range(3,7)])
+
+#2)
+print([c for c in "programa"])
+
+#3)
+print([[z,k] for z in range(3) for k in range(3,5)])
+
+#4)
+print([s.upper() for s in "hoy es viernes"])
+
+#5)
+print([len(z) for z in "hoy es viernes 24".split()])
+
+##########################################
+#Ej1)
+print("\nEjercicio 1\n")
+##1. Crear una función que retorne una lista creada por comprensión con los
+##números pares hasta un número dado por parámetro.
+def pareshastan(n):
+    return [numero for numero in range(1,n+1) if numero%2==0]
+
+print(pareshastan(25))
+
+#Ej2)
+print("\nEjercicio 2:\n")
+##2. Utilizar comprensión de listas para obtener los números que se obtienen
+##como “(n+1)*(n–1)” para n>1, y que son menores de 1000. La lista de
+##estos números comienza con [0, 3, 8, 15, 24, ...].
+print([(n+1)*(n-1) for n in range(1000) if n>1])
+
+#Ej3)
+print("\nEjercicio 3:\n")
+##3. Utilizando listas por comprensión implementar una función que toma
+##una cadena y devuelve la cadena en mayúsculas sin espacios en blanco
+##ni símbolos de puntuación (los dígitos no se cambian).
+def cadenalimpia(cadena):
+    return "".join([letra.upper() for letra in cadena.strip() if not letra in "0123456789 :,;."])
+
+print(cadenalimpia("Es 1 la idea, que vale por: 100, muchas palabras"))
+
+#Ej4)
+print("\nEjercicio 4:\n")
+##4. Dado una cadena de caracteres con fechas en formato “MM/DD/YYYY”
+##separadas por coma, obtener una lista de cadenas de caracteres con
+##las fechas en formato “DD/MM/YYYY”
+##Ej.: "10/11/2016,01/02/2016"  ['11/10/2016', '02/01/2016']
+
+print(["{}/{}/{}".format(fecha.split("/")[1],fecha.split("/")[0],fecha.split("/")[2]) for fecha in "10/11/2016,01/02/2016,05/06/2017,07/31/2017".split(",")])
+
+#Otra solución:
+
+def reformatFecha(fecha):
+    fecha_parts = fecha.split("/")
+    return "{}/{}/{}".format(fecha_parts[1],fecha_parts[0],fecha_parts[2])
+
+fechas = ["10/11/2016","01/02/2016","05/06/2017","07/31/2017"]
+print([reformatFecha(fecha) for fecha in fechas])
+
+#Ej5)
+print("\nEjercicio 5:\n")
+##5. Dada la siguiente clase:
+##class Mail(object):
+##  def __init__(self, asunto, cuerpo, destinatarios):
+##      self.asunto = asunto
+##      self.cuerpo = cuerpo
+##      self.destinatarios = [ ... ]
+##      self.copia = [ ... ]
+##      self.copia_oculta = [ ... ]
+##a. Utilizando listas por comprensión, completar el constructor de la
+##clase a partir de la lista de destinatarios (cadenas de caracteres
+##con las direcciones de email) que se recibe como parámetro
+##siguiendo las siguientes condiciones:
+##b. Las direcciones de email que pertenezcan al dominio “ucu.edu.uy”
+##van en el campo (lista) copia.
+##c. Las direcciones de email que pertenezcan al dominio “gmail.com”
+##van en el campo (lista) copia_oculta.
+##d. Todas las demás dirección van en la lista de destinatarios del mail.
+class Mail(object):
+    def __init__(self, asunto, cuerpo, destinatarios):
+        self.asunto = asunto
+        self.cuerpo = cuerpo
+        self.destinatarios = [mail for mail in destinatarios if (not "ucu.edu.uy" in mail) and (not "gmail.com" in mail)]
+        self.copia = [mail for mail in destinatarios if "ucu.edu.uy" in mail]
+        self.copia_oculta = [mail for mail in destinatarios if "gmail.com" in mail]
+
+mail = Mail("hola","saludo",["rroballo@ucu.edu.uy", "gpennino@ucu.edu.uy","rodolfo.roballo@gmail.com","fwagner@gmail.com","rroballo@genexus.com"])
+print(mail.destin7atarios)
+print(mail.copia)
+print(mail.copia_oculta)
+            
+
