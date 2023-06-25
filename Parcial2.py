@@ -1148,3 +1148,17 @@ numero_binario = "1101"
 numero_decimal = binario_a_decimal(numero_binario)
 print(numero_decimal)  # Resultado: 13
 
+# Write a program that finds the summation of every number from 1 to num. The number will always be a positive integer greater than 0.
+
+def summation(num):
+    return sum(range(1,num + 1))
+
+# Complete the solution so that it reverses the string passed into it.
+
+def solution(str):
+    return str[::-1]
+
+#Move the first letter of each word to the end of it, then add "ay" to the end of the word. Leave punctuation marks untouched.
+
+def pig_it(text):
+    txtlst = text.split()
