@@ -2624,3 +2624,25 @@ print(mail.copia)
 print(mail.copia_oculta)
             
 
+name = input("Enter file:")
+handle = open(name)
+emailist = []
+sender= dict()
+
+for line in handle:
+    if line.startswith("From "):
+        linelst = line.split()
+        email = linelst[1]
+        emailist.append(email)
+
+for dir in emailist:
+    sender[dir] = sender.get(dir, 0) + 1
+
+bigcount = 0 
+bigword = 0 
+
+for word,count in sender.items():
+    if bigcount is None or count > bigcount:
+        bigword = word
+        bigcount = count
+print(bigword, bigcount)
