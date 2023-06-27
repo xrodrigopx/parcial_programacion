@@ -3033,3 +3033,87 @@ while True:
 
     else:
         print("Opción inválida. Intente nuevamente.")
+
+
+##########################################
+
+def comprimir_lista(numeros):
+    comprimidos = []
+    cantidad = 1
+
+    for i in range(1, len(numeros)):
+        if numeros[i] == numeros[i-1]:
+            cantidad += 1
+        else:
+            comprimidos.append([numeros[i-1], cantidad])
+            cantidad = 1
+
+    comprimidos.append([numeros[-1], cantidad])
+
+    return comprimidos if len(comprimidos) < len(numeros) else numeros
+
+numeros = [1, 1, 1, 2, 2, 3, 4, 4, 5, 5, 5, 5]
+resultado = comprimir_lista(numeros)
+print(resultado)  # [[1, 3], [2, 2], 3, [4, 2], [5, 4]]
+
+numeros = [2, 2, 2, 2, 2, 2, 2]
+resultado = comprimir_lista(numeros)
+print(resultado)  # [[2, 7]]
+
+numeros = [1, 2, 3, 4, 5]
+resultado = comprimir_lista(numeros)
+print(resultado)  # [1, 2, 3, 4, 5]
+
+
+######################################
+
+
+def combinar_listas(lista1, lista2):
+    combinada = []
+    len1 = len(lista1)
+    len2 = len(lista2)
+    max_len = max(len1, len2)
+
+    for i in range(max_len):
+        if i < len1:
+            combinada.append(lista1[i])
+        if i < len2:
+            combinada.append(lista2[i])
+
+    return combinada
+
+
+lista1 = [1, 2, 3]
+lista2 = ['a', 'b', 'c', 'd', 'e']
+resultado = combinar_listas(lista1, lista2)
+print(resultado)  # [1, 'a', 2, 'b', 3, 'c', 'd', 'e']
+
+lista1 = ['rojo', 'verde']
+lista2 = ['azul', 'amarillo', 'naranja']
+resultado = combinar_listas(lista1, lista2)
+print(resultado)  # ['rojo', 'azul', 'verde', 'amarillo', 'naranja']
+
+
+##############################################
+
+
+def producto_cartesiano(lista1, lista2):
+    producto = []
+
+    for elemento1 in lista1:
+        for elemento2 in lista2:
+            producto.append([elemento1, elemento2])
+
+    return producto
+
+lista1 = [1, 2]
+lista2 = ['a', 'b']
+resultado = producto_cartesiano(lista1, lista2)
+print(resultado)  # [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
+
+lista1 = [1, 2, 3]
+lista2 = ['rojo', 'verde']
+resultado = producto_cartesiano(lista1, lista2)
+print(resultado)  # [[1, 'rojo'], [1, 'verde'], [2, 'rojo'], [2, 'verde'], [3, 'rojo'], [3, 'verde']]
+
+
