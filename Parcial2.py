@@ -2623,6 +2623,8 @@ print(mail.destin7atarios)
 print(mail.copia)
 print(mail.copia_oculta)
             
+###########################################################################################
+
 
 name = input("Enter file:")
 handle = open(name)
