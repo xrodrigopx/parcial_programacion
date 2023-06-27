@@ -2648,3 +2648,388 @@ for word,count in sender.items():
         bigword = word
         bigcount = count
 print(bigword, bigcount)
+
+####################################
+# Perros y pelotas
+
+def perrosYPelota(xyz):
+    try:
+        if len(xyz) != 3:
+            raise ValueError("La lista debe contener exactamente tres elementos")
+        
+        x, y, z = xyz
+        
+        if not (0 < x < z < y < 100):
+            raise ValueError("Los valores de posición no cumplen con las restricciones")
+        
+        distancia_perro_a = abs(x - z)
+        distancia_perro_b = abs(y - z)
+        
+        if distancia_perro_a == distancia_perro_b:
+            return "Pelota"
+        elif distancia_perro_a < distancia_perro_b:
+            return "PerroA"
+        else:
+            return "PerroB"
+    
+    except IndexError:
+        return ""
+    except TypeError:
+        return ""
+    except ValueError as e:
+        return str(e)
+
+
+xyz = [2, 7, 3]
+print(perrosYPelota(xyz))  # Debería imprimir "PerroA"
+
+xyz = [3, 5, 4]
+print(perrosYPelota(xyz))  # Debería imprimir "Pelota"
+
+xyz = [3, 5]  # IndexError
+print(perrosYPelota(xyz))  # Debería imprimir ""
+
+xyz = [3, 5, "gato"]  # TypeError
+print(perrosYPelota(xyz))  # Debería imprimir ""
+
+
+################
+
+"""Aquí tienes una posible implementación de la función lista_mágica que genera una lista de números aleatorios sin repeticiones dentro de un rango especificado:
+
+"""
+
+
+import random
+
+def lista_mágica(cantidad, inicio, fin):
+    if fin - inicio + 1 < cantidad:
+        return []  # No hay suficientes números en el rango
+    
+    numeros_disponibles = list(range(inicio, fin + 1))
+    numeros_elegidos = random.sample(numeros_disponibles, cantidad)
+    
+    return numeros_elegidos
+
+print(lista_mágica(5, 1, 10))  # Generar una lista de 5 números aleatorios entre 1 y 10
+
+print(lista_mágica(3, 100, 200))  # Generar una lista de 3 números aleatorios entre 100 y 200
+
+print(lista_mágica(10, 1, 5))  # Intentar generar una lista de 10 números aleatorios entre 1 y 5 (no hay suficientes números)
+
+print(lista_mágica(0, 1, 100))  # Intentar generar una lista vacía
+
+
+"""
+Aquí tienes una posible implementación de la función productos_comunes que encuentra los productos comunes entre dos inventarios y devuelve un diccionario con los productos y la suma de las cantidades:"""
+
+def productos_comunes(inventario1, inventario2):
+    productos_comunes = {}
+    
+    for producto in inventario1:
+        if producto in inventario2:
+            cantidad1 = inventario1[producto]
+            cantidad2 = inventario2[producto]
+            productos_comunes[producto] = cantidad1 + cantidad2
+    
+    return productos_comunes
+
+print(productos_comunes({'manzanas': 5, 'peras': 8, 'platanos': 3}, {'platanos': 6, 'naranjas': 7, 'manzanas': 4}))
+# Debería imprimir {'manzanas': 9, 'platanos': 9}
+
+print(productos_comunes({'camisas': 10, 'pantalones': 5}, {'zapatos': 8, 'corbatas': 6}))
+# Debería imprimir {}
+
+"""Aquí tienes una posible implementación de la función que calcula el valor en ohms de una resistencia de carbón a partir de los colores de las bandas:"""
+
+def valor_resistencia(colores):
+    codigos_colores = {
+        "negro": 0,
+        "marrón": 1,
+        "rojo": 2,
+        "naranja": 3,
+        "amarillo": 4,
+        "verde": 5,
+        "azul": 6,
+        "violeta": 7,
+        "gris": 8,
+        "blanco": 9
+    }
+    
+    if len(colores) != 3:
+        return None  # La lista de colores no tiene la longitud esperada
+    
+    cifra1 = codigos_colores.get(colores[0])
+    cifra2 = codigos_colores.get(colores[1])
+    multiplicador = 10 ** codigos_colores.get(colores[2])
+    
+    if cifra1 is None or cifra2 is None or multiplicador is None:
+        return None  # Uno o más colores no son válidos
+    
+    valor_ohms = (cifra1 * 10 + cifra2) * multiplicador
+    return valor_ohms
+
+resistencia = ["negro", "rojo", "verde"]
+print(valor_resistencia(resistencia))  # Debería imprimir 200000
+
+resistencia = ["marrón", "negro", "rojo"]
+print(valor_resistencia(resistencia))  # Debería imprimir 100
+
+resistencia = ["amarillo", "violeta", "naranja"]
+print(valor_resistencia(resistencia))  # Debería imprimir 47000
+
+resistencia = ["azul", "gris", "blanco"]
+print(valor_resistencia(resistencia))  # Debería imprimir 680000000
+
+resistencia = ["rojo", "verde", "azul"]  # No tiene el número adecuado de colores
+print(valor_resistencia(resistencia))  # Debería imprimir None
+
+resistencia = ["negro", "rojo", "morado"]  # Color inválido
+print(valor_resistencia(resistencia))  # Debería imprimir None
+
+
+#########################################
+
+def calcular_metros_tela(archivo_pedidos):
+    tallas_longitud = {
+        "S": 69,
+        "M": 71,
+        "L": 74,
+        "XL": 77,
+        "XXL": 81
+    }
+
+    total_metros = 0
+
+    try:
+        with open(archivo_pedidos, 'r') as archivo:
+            lineas = archivo.readlines()
+
+            for linea in lineas:
+                pedido = linea.strip().split(',')
+                for talla_cantidad in pedido:
+                    talla, cantidad = talla_cantidad.split(':')
+                    cantidad = int(cantidad)
+                    if talla in tallas_longitud:
+                        longitud = tallas_longitud[talla]
+                        metros = longitud * cantidad
+                        total_metros += metros
+
+    except FileNotFoundError:
+        print("El archivo de pedidos no existe.")
+        return None
+
+    return total_metros
+
+archivo_pedidos = "pedidos.txt"  # Reemplazar con la ruta y nombre del archivo de pedidos
+metros_necesarios = calcular_metros_tela(archivo_pedidos)
+
+if metros_necesarios is not None:
+    print("La cantidad de metros necesarios de tela es:", metros_necesarios)
+
+#########################
+
+def es_palindromo_binario(numero):
+    binario = bin(numero)[2:]  # Obtener representación binaria sin el prefijo '0b'
+    binario_reverso = binario[::-1]  # Invertir la cadena binaria
+
+    return binario == binario_reverso
+
+#Realizar un programa en python que solicite al usuario un número decimal y muestre en pantalla si el mismo es un palíndromo en notación binaria.
+
+while True:
+    try:
+        decimal = int(input("Ingresa un número decimal: "))
+        if decimal < 0:
+            raise ValueError("El número debe ser positivo.")
+        break
+    except ValueError as error:
+        print("Error:", error)
+
+if es_palindromo_binario(decimal):
+    print("El número decimal", decimal, "es un palíndromo en notación binaria.")
+else:
+    print("El número decimal", decimal, "no es un palíndromo en notación binaria.")
+
+
+###########################################
+# POO1
+
+class TarjetaDeCredito:
+    def __init__(self, numero, titular, fecha_vencimiento, cvv, limite_credito):
+        self.numero = numero
+        self.titular = titular
+        self.fecha_vencimiento = fecha_vencimiento
+        self.cvv = cvv
+        self.limite_credito = limite_credito
+        self.historico_pagos = []
+
+    def realizar_pago(self, monto, motivo):
+        if monto <= self.limite_credito:
+            self.limite_credito -= monto
+            self.historico_pagos.append((monto, motivo))
+            return True
+        else:
+            return False
+
+    def saldo(self):
+        return self.limite_credito
+
+    def obtener_numero(self):
+        return self.numero
+
+    def obtener_titular(self):
+        return self.titular
+
+    def obtener_fecha_vencimiento(self):
+        return self.fecha_vencimiento
+
+    def obtener_cvv(self):
+        return self.cvv
+
+    def obtener_limite_credito(self):
+        return self.limite_credito
+
+    def obtener_historico_pagos(self):
+        return self.historico_pagos
+
+    def __str__(self):
+        return f"Número: {self.numero}\nTitular: {self.titular}\nFecha de vencimiento: {self.fecha_vencimiento}\nCVV: {self.cvv}\nLímite de crédito: ${self.limite_credito}\n"
+
+# Crear las instancias de TarjetaDeCredito
+tarjeta1 = TarjetaDeCredito("1234567890123456", "Adela Sanchez", "12/26", "123", 2000)
+tarjeta2 = TarjetaDeCredito("9876543210987654", "Juan Oreste", "06/25", "456", 1500)
+
+# Realizar los pagos en cada tarjeta
+tarjeta1.realizar_pago(500, "Compra en línea")
+tarjeta1.realizar_pago(1000, "Pago de factura")
+tarjeta1.realizar_pago(250, "Nafta")
+tarjeta1.realizar_pago(50, "Regalos")
+
+tarjeta2.realizar_pago(500, "Compra en línea")
+tarjeta2.realizar_pago(1000, "Pago de factura")
+tarjeta2.realizar_pago(250, "Nafta")
+
+# Mostrar el estado actual de cada tarjeta
+print("Estado de la Tarjeta 1:")
+print(tarjeta1)
+
+print("Estado de la Tarjeta 2:")
+print(tarjeta2)
+
+
+##############################################
+
+# POO2
+
+
+
+class TarjetaDeCredito:
+    def __init__(self, numero, titular, fecha_vencimiento, cvv, limite_credito):
+        self.numero = numero
+        self.titular = titular
+        self.fecha_vencimiento = fecha_vencimiento
+        self.cvv = cvv
+        self.limite_credito = limite_credito
+        self.historico_pagos = []
+
+    def realizar_pago(self, monto, motivo):
+        if monto <= self.limite_credito:
+            self.limite_credito -= monto
+            self.historico_pagos.append((monto, motivo))
+            return True
+        else:
+            return False
+
+    def saldo(self):
+        return self.limite_credito
+
+    def obtener_numero(self):
+        return self.numero
+
+    def obtener_titular(self):
+        return self.titular
+
+    def obtener_fecha_vencimiento(self):
+        return self.fecha_vencimiento
+
+    def obtener_cvv(self):
+        return self.cvv
+
+    def obtener_limite_credito(self):
+        return self.limite_credito
+
+    def obtener_historico_pagos(self):
+        return self.historico_pagos
+
+    def __str__(self):
+        return f"Número: {self.numero}\nTitular: {self.titular}\nFecha de vencimiento: {self.fecha_vencimiento}\nCVV: {self.cvv}\nLímite de crédito: ${self.limite_credito}\n"
+
+tarjetas = {}
+
+while True:
+    print("\n--- Sistema de Gestión de Tarjetas de Crédito ---")
+    print("1. Crear tarjeta")
+    print("2. Realizar pago")
+    print("3. Consultar saldo")
+    print("4. Imprimir información de tarjeta")
+    print("5. Salir")
+
+    opcion = input("Ingrese el número de opción: ")
+
+    if opcion == "1":
+        print("--- Crear tarjeta ---")
+        cedula = input("Número de cédula: ")
+        numero = input("Número de tarjeta: ")
+        titular = input("Titular: ")
+        fecha_vencimiento = input("Fecha de vencimiento: ")
+        cvv = input("CVV: ")
+        limite_credito = float(input("Límite de crédito: "))
+
+        tarjeta = TarjetaDeCredito(numero, titular, fecha_vencimiento, cvv, limite_credito)
+        tarjetas[cedula] = tarjeta
+        print("Tarjeta creada con éxito.")
+
+    elif opcion == "2":
+        print("--- Realizar pago ---")
+        cedula = input("Número de cédula: ")
+
+        if cedula in tarjetas:
+            tarjeta = tarjetas[cedula]
+            monto = float(input("Monto del pago: "))
+            motivo = input("Motivo: ")
+
+            if tarjeta.realizar_pago(monto, motivo):
+                print("Pago realizado con éxito.")
+            else:
+                print("No se puede realizar el pago. Saldo insuficiente.")
+        else:
+            print("No se encontró una tarjeta asociada a la cédula ingresada.")
+
+    elif opcion == "3":
+        print("--- Consultar saldo ---")
+        cedula = input("Número de cédula: ")
+
+        if cedula in tarjetas:
+            tarjeta = tarjetas[cedula]
+            saldo = tarjeta.saldo()
+            print(f"Saldo actual: ${saldo}")
+        else:
+            print("No se encontró una tarjeta asociada a la cédula ingresada.")
+
+    elif opcion == "4":
+        print("--- Imprimir información de tarjeta ---")
+        cedula = input("Número de cédula: ")
+
+        if cedula in tarjetas:
+            tarjeta = tarjetas[cedula]
+            print(tarjeta)
+        else:
+            print("No se encontró una tarjeta asociada a la cédula ingresada.")
+
+    elif opcion == "5":
+        print("¡Hasta luego!")
+        break
+
+    else:
+        print("Opción inválida. Intente nuevamente.")
