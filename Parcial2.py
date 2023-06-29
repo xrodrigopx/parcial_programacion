@@ -3160,3 +3160,225 @@ print(convertir_base('FF', 16, 2))  # Salida: 11111111
 print(convertir_base(11111111, 2, 16))  # Salida: FF
 
 
+"""Ejercicio 1 
+Una cadena de hamburguesas ofrece a sus clientes sus productos permitiendo elegir todos 
+los ingredientes de forma independiente. 
+El costo de cada producto está dado por la suma del costo de sus ingredientes y el 22% de 
+IVA agregado al total. 
+Compartimos a continuación la lista de ingredientes y su costo asociado: 
+● Carne 180g: $100 
+● Pollo Crispy: $90 
+● Hamburguesa de espinaca: $80 
+● Pan de hamburguesas: $40 
+● Lechuga: $10 
+● Tomate: $10 
+● Cebolla: $10 
+● Queso mozzarella 20g: $30 
+● Huevo frito: $40 
+El sistema de pedidos recibe archivos de texto en los cuales cada línea es un producto 
+solicitado por el cliente, en los que cada ingrediente se separa por “,”. 
+Ejemplo de un archivo con 2 pedidos: 
+carne,carne,pan,huevo,cebolla,mozzarella 
+pan,espinaca,cebolla,tomate 
+Nota: Nombre a los ingredientes como le resulte conveniente 
+Realizar un programa que lea un archivo de pedidos en el formato anterior y muestre en 
+pantalla el número de pedido (número de línea en el archivo), el precio total y si es apto 
+para vegetarianos en el caso que corresponda (No debe contener ni Carne 180g ni Pollo 
+Crispy). 
+Utilizando el ejemplo anterior, la salida en pantalla debe de ser la siguiente: 
+Pedido 1: $390,4 
+Pedido 2: $170,8 Vegetariano 
+En el caso que en el pedido haya un ingrediente que no exista, el precio debe ser 0 y a 
+continuación poner el mensaje: “Faltan Ingredientes - no se puede completar el pedido
+Answer :"""
+
+#primero definimos los ingredientes
+ingredientes = {
+"carne": 100,
+"pollo": 90,
+"espinaca": 80, #medio cara la espinaca
+"pan": 40,
+"lechuga": 10,
+"tomate": 10, 
+"cebolla": 10,
+"mozzarella": 30,
+"huevo": 40
+}
+
+#ahora vamos a ver la lógica detrás del programa, para luego trabajar con el archivo en base a esta lógica
+def calcular_precio_pedido(pedido):
+    total = 0 #tomemos el valos inicial del precio como 0 si no tenemos ingredientes
+    vegetariano = True #por default, si el menú tiene solo un elemento que no es carne o varios, será vegetariano
+    
+    for ingrediente in pedido: #entonces, cuando señalemos los ingredientes del menú, armaremos una listita
+        if ingrediente in ingredientes: #recorreremos la lista
+            total += ingredientes[ingrediente] #habiendo agregado los elementos
+            if ingrediente == "carne" or ingrediente == "pollo": #pero si uno es carne o pollo
+                vegetariano = False #ya no será vegetariano
+        else:
+            total = 0 #si no ponemos nada
+            break #se romperá el programa
+    
+    return total, vegetariano #al final, devolveremos el total del menú
+
+#ahora vamos con el archivo
+def procesar_archivo_pedidos(nombre_archivo):
+    try: #intentaremos abrir el archivo y hacer lo siguiente:
+        with open(nombre_archivo, 'r') as archivo: #leer el archivo de ingredientes
+            pedidos = archivo.readlines() #con esta pequeña función
+        
+        for i, pedido in enumerate(pedidos): #en la lista de ingedientes, le asignaremos un valor único a cada uno
+            ingredientes_pedido = pedido.strip().split(",") #separaremos los ingredientes uno por uno
+            precio, vegetariano = calcular_precio_pedido(ingredientes_pedido) #para luego, en base al precio y aptitud del menú
+            #imprimiremos si el pedido es válido
+            if precio == 0:
+                print(f"Pedido {i+1}: Faltan Ingredientes - no se puede completar el pedido")
+            else: #si es vegetariano
+                if vegetariano:
+                    print(f"Pedido {i+1}: {precio} Vegetariano")
+                else: #y el precio final
+                    print(f"Pedido {i+1}: {precio}")
+    
+    except FileNotFoundError: #al final, si el archivo tiene cualquier cosa adentro, tiraremos un lindo error
+        print("El archivo de pedidos no existe.")
+
+#vamso a llamar la función a ver
+procesar_archivo_pedidos() 
+
+
+
+"""Ejercicio 2
+Una dirección IP es un número que identifica a un dispositivo en una red, el mismo está
+compuesto por 4 números del 0 al 255 (en base decimal) separados por puntos.
+Si los escribimos en sistema binario tenemos 4 números de 8 bits cada uno.
+Ejemplo: la dirección IP 192.168.1.1 la podemos reescribir de la siguiente forma:
+11000000.10101000.00000001.00000001
+Las direcciones IP tienen 5 clases: A, B, C, D y E, dependiendo de cuales sean los bits
+iniciales del primer octeto de la dirección en sistema binario:
+● Las IP de Clase A comienzan con el dígito ‘0’
+● Las de Clase B comienzan con ‘10’
+● Las de Clase C comienzan con ‘110’
+● Las de Clase D comienzan con ‘1110’
+● Las de Clase E comienzan con ‘1111’
+En el ejemplo anterior, la dirección 192.168.1.1 es de Clase C, ya que el primer número que
+la compone es 192, el cual expresado en binario es “11000000” y el mismo comienza con
+“110”.
+Se solicita crear una función que dada una dirección IP (expresada en base decimal),
+retorne a qué clase pertenece.
+Se debe de manejar mediante excepciones cuando la función reciba valores que no sean de
+tipo entero (ej. letras o símbolos).
+Ejemplo:
+dir_ip = "192.168.2.1"
+clase = clase_ip(dir_ip)
+print("La ip: " + dir_ip + " es de clase: " + clase)
+# Imprime: “La ip: 192.168.2.1 es de clase: C
+Otros ejemplos de direcciones IP:
+“172.16.30.15” ----> Clase B
+“169.254.3.1” ----> Clase B
+NOTA: Utilice una función que reciba un número entero y devuelva el número binario (utilice
+el mecanismo de múltiples divisiones por 2)
+No puede utilizar las funciones de conversión que trae python.
+"""
+
+#Conversión de sistema binario a decimal
+
+#Ejercicio 3: Conversión de decimal a binario (función)
+
+def clase_ip(dir_ip):
+    try:
+
+        
+        # lo que estoy por hacer no le va a gustar
+        octetos = dir_ip.split('.')
+        
+        # pero si no lo hago, no entrego nada, sepa entender
+        binario = [bin(int(octeto))[2:].zfill(8) for octeto in octetos]
+        
+        # hay que definir como empieza la ip entonces con el .startswith()
+        primer_octeto = binario[0]
+        if primer_octeto.startswith('0'):
+            return 'A'
+        elif primer_octeto.startswith('10'):
+            return 'B'
+        elif primer_octeto.startswith('110'):
+            return 'C'
+        elif primer_octeto.startswith('1110'):
+            return 'D'
+        elif primer_octeto.startswith('1111'):
+            return 'E'
+        else:
+            return 'No válida'
+    except ValueError:
+        return 'No válida'
+
+dir_ip = "192.168.2.1"
+clase = clase_ip(dir_ip)
+print("La ip: " + dir_ip + " es de clase: " + clase)
+
+
+
+"""Ejercicio 3
+Una empresa del sector agropecuario realiza mediciones sobre el volúmen de
+precipitaciones sobre sus cultivos.
+Es de interés poder calcular si existe déficit hídrico para cada uno de ellos permitiendo
+de este modo evaluar su impacto en el suministro de agua.
+Un cultivo presenta déficit hídrico si el volúmen de precipitaciones sobre el mismo es menor
+al que necesita.
+Los datos proporcionados por la empresa para sus cultivos esta temporada son los
+siguientes:
+Cultivo Demanda del
+cultivo (mm)
+Precipitación sobre
+el cultivo (mm)
+Maiz 600 450
+Trigo 450 350
+Arroz 800 900
+Soja 550 400
+Se pide:
+a) Representar la información proporcionada por la empresa para esta temporada como un
+diccionario e implementar la función calcular_deficit_hidrico (cultivos) la cual reciba un
+diccionario de cultivos con niveles de demanda y precipitación actual, y retorne un nuevo
+diccionario que posea como clave el nombre del cultivo y como valor el déficit hídrico, en el
+caso que no haya déficit hidrico, el valor es 0.
+b) Realizar una función grabar(deficit_hidrico) que almacene los resultados de
+déficit en un archivo llamado “resultados_deficit_hidrico.txt” con el siguiente formato:
+<nombre del cultivo>,<si o no>,<deficit hidrico>
+Nota: deficit_hidrico es el diccionario que retorna la función
+calcular_deficit_hidrico
+Ejemplo de archivo de salida:
+Centeno,No,0
+Avena,Si,100
+En el ejemplo, el Centeno no presentó déficit hídrico, mientras que la Avena presentó un
+déficit con un valor de 100mm.
+Implementar el programa principal que utilice las funciones anteriores.
+
+"""
+
+#ejercicio 3
+
+def calcular_deficit_hidrico(cultivos):
+    deficit_hidrico = {} #deberemos crear un diccionario vacío donde almacenaremos los pares clave valor de los cultivos y su déficit
+    for cultivo, demanda, precipitacion in cultivos.items():  #en los items del archivo hay que analizar los valores de cultivo, demanda, precipitacion
+        if precipitacion < demanda: #esto está bastante claro
+            deficit_hidrico[cultivo] = demanda - precipitacion
+        else:
+            deficit_hidrico[cultivo] = 0
+    return deficit_hidrico
+
+def grabar(deficit_hidrico): #entonces, con la lógica del programa, vamos a trabajar en el archivo
+    with open("resultados_deficit_hidrico.txt", "w") as file: #abrimos el archivo para escribir
+        for cultivo, deficit in deficit_hidrico.items(): #colocamos como lo vamos a escribir
+            if deficit > 0: #establecemos nuestras condiciones
+                file.write(f"{cultivo},Si,{deficit}\n") #si tiene déficit
+            else:
+                file.write(f"{cultivo},No,0\n") #si no tiene déficit
+
+cultivos = {
+    'Maiz': [600, 450],
+    'Trigo': [450, 350],
+    'Arroz': [800, 900],
+    'Soja': [550, 400]
+}
+
+deficit_hidrico = calcular_deficit_hidrico(cultivos)
+grabar(deficit_hidrico)
