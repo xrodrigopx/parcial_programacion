@@ -3117,3 +3117,46 @@ resultado = producto_cartesiano(lista1, lista2)
 print(resultado)  # [[1, 'rojo'], [1, 'verde'], [2, 'rojo'], [2, 'verde'], [3, 'rojo'], [3, 'verde']]
 
 
+"""Claro, puedo ayudarte a escribir una función que convierta números decimales a binarios y viceversa, y además sea modificable para cambiar las bases de los números de entrada y salida. Aquí tienes un ejemplo en Python:"""
+
+def convertir_base(numero, base_entrada, base_salida):
+    if base_entrada == 10:  # Decimal a otra base
+        resultado = ''
+        while numero > 0:
+            residuo = numero % base_salida
+            resultado = str(residuo) + resultado
+            numero = numero // base_salida
+        return resultado
+    elif base_salida == 10:  # Otra base a decimal
+        resultado = 0
+        potencia = 0
+        while numero > 0:
+            residuo = numero % 10
+            resultado += residuo * (base_entrada ** potencia)
+            numero = numero // 10
+            potencia += 1
+        return resultado
+    else:
+        # Conversión de una base a otra base
+        decimal = int(str(numero), base_entrada)
+        resultado = ''
+        while decimal > 0:
+            residuo = decimal % base_salida
+            resultado = str(residuo) + resultado
+            decimal = decimal // base_salida
+        return resultado
+
+
+# Decimal a binario
+print(convertir_base(42, 10, 2))  # Salida: 101010
+
+# Binario a decimal
+print(convertir_base(101010, 2, 10))  # Salida: 42
+
+# Hexadecimal a binario
+print(convertir_base('FF', 16, 2))  # Salida: 11111111
+
+# Binario a hexadecimal
+print(convertir_base(11111111, 2, 16))  # Salida: FF
+
+
